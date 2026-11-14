@@ -7,6 +7,9 @@ License: MIT
 import socket
 import json
 import threading
+import os
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", 8653))
@@ -21,6 +24,9 @@ cmd_docs: list[tuple[str, str]] = [
 
 connected_ips: list[tuple[str, tuple[str, int]]] = []
 messages: list[tuple[str, str]] = []
+if os.path.exists("messages.json"):
+    with open("messages.json") as f:
+        messages = json.load(f)
 
 def handle_commands():
     while True:
@@ -31,10 +37,15 @@ def handle_commands():
                     print(f"{name}: {definition}")
             case "exit":
                 stop_event.set()
+                with open("messages.json", "w") as f:
+                    json.dump(messages, f, indent=4)
                 break
             case "purge":
                 stop_index = int(cmd.lower().split()[1])
                 del messages[0:-stop_index]
+            case "get messages":
+                for user, message in messages:
+                    print(f"{user}: {message}")
 
 
 stop_event = threading.Event()

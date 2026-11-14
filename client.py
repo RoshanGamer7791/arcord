@@ -9,6 +9,7 @@ import json
 import sys
 import random
 import string
+import colorama
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
@@ -25,7 +26,7 @@ sock.settimeout(5.0)
 server_addr: tuple[str, int] = ("127.0.0.1", 8653)
 
 username = f"{"".join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=10))}{random.randint(0, 9999):04d}"
-print(username)
+print(f"{colorama.Fore.LIGHTBLUE_EX}{username}{colorama.Fore.RESET}")
 
 
 def send_packet(data: dict) -> int:
