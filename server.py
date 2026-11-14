@@ -34,7 +34,7 @@ def handle_commands():
                 break
             case "purge":
                 stop_index = int(cmd.lower().split()[1])
-                del messages[-1:-stop_index]
+                del messages[0:-stop_index]
 
 
 stop_event = threading.Event()
@@ -46,8 +46,10 @@ while not stop_event.is_set():
         jsonData: dict = json.loads(data)
         if jsonData["type"] == "con":
             connected_ips.append((jsonData["username"], addr))
+            messages.append(("Server", f"{jsonData["username"]} has came online"))
         if jsonData["type"] == "dis":
             connected_ips.remove((jsonData["username"], addr))
+            messages.append(("Server", f"{jsonData["username"]} has came offline"))
         if jsonData["type"] == "GET":
             if jsonData["request"] == "messages":
                 sock.sendto(json.dumps(messages).encode("utf-8"), addr)
